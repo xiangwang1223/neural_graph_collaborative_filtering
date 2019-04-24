@@ -26,6 +26,7 @@ If you want to use our codes in your research, please cite:
 The code has been tested running under Python 3.6.5. The required packages are as follows:
 * tensorflow == 1.8.0
 * numpy == 1.14.3
+* scipy == 1.1.0
 * sklearn == 0.19.1
 
 ## Example to Run the Codes
