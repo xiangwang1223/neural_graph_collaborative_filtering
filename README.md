@@ -42,19 +42,26 @@ python NGCF.py --dataset amazon-book --regs [1e-5] --embed_size 64 --layer_size 
 ```
 Some important arguments:
 * `alg_type`
-  * which specifies the type of graph convolutional layer.
+  * It specifies the type of graph convolutional layer.
   * Here we provide three options:
     * `ngcf` (by default), proposed in [Neural Graph Collaborative Filtering](https://www.comp.nus.edu.sg/~xiangnan/papers/sigir19-NGCF.pdf), SIGIR2019. Usage: `--alg_type ngcf`.
     * `gcn`, proposed in [Semi-Supervised Classification with Graph Convolutional Networks](https://openreview.net/pdf?id=SJU4ayYgl), ICLR2018. Usage: `--alg_type gcn`.
     * `gcmc`, propsed in [Graph Convolutional Matrix Completion](https://www.kdd.org/kdd2018/files/deep-learning-day/DLDay18_paper_32.pdf), KDD2018. Usage: `--alg_type gcmc`.
   
 * `adj_type`
-  * which specifies the type of laplacian matrix where each entry defines the decay factor between two connected nodes.
+  * It specifies the type of laplacian matrix where each entry defines the decay factor between two connected nodes.
   * Here we provide four options:
     * `plain`
     * `norm`
     * `gcmc`
     * `ngcf`
+
+* `node_dropout`
+  * It indicates the node dropout ratio, which randomly blocks a particular node and discard all its outgoing messages. Usage: `--node_dropout [0.1] --node_dropout_flag 1`
+  * Note that the arguement `node_dropout_flag` also needs to be set as 1, since the node dropout could lead to higher computational cost compared to message dropout.
+
+* `mess_dropout`
+  * It indicates the message dropout ratio, which randomly drops out the outgoing messages. Usage `--mess_dropout [0.1,0.1,0.1]`.
 
 ## Dataset
 We provide two processed datasets: Gowalla and Amazon-book.
