@@ -1,4 +1,3 @@
-#!/usr/local/bin/bash
 '''
 Created on Aug 19, 2016
 @author: Xiang Wang (xiangwang@u.nus.edu)
