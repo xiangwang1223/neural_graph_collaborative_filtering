@@ -1,4 +1,3 @@
-#!/usr/local/bin/bash
 '''
 Created on Oct 10, 2018
 Tensorflow Implementation of Neural Graph Collaborative Filtering (NGCF) model in:
