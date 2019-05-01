@@ -30,3 +30,40 @@ The code has been tested running under Python 3.6.5. The required packages are a
 * sklearn == 0.19.1
 
 ## Example to Run the Codes
+The instruction of commands has been clearly stated in the codes (see the parser function in NGCF/utility/parser.py).
+* Gowalla dataset
+```
+python NGCF.py --dataset gowalla --regs [1e-5] --embed_size 64 --layer_size [64,64,64] --lr 0.0001 --save_flag 1 --pretrain 0 --batch_size 1024 --epoch 400 --verbose 1 --node_dropout [0.1] --mess_dropout [0.1,0.1,0.1]
+```
+
+* Amazon-book dataset
+```
+python NGCF.py --dataset amazon-book --regs [1e-5] --embed_size 64 --layer_size [64,64,64] --lr 0.0005 --save_flag 1 --pretrain 0 --batch_size 1024 --epoch 200 --verbose 50 --node_dropout [0.1] --mess_dropout [0.1,0.1,0.1]
+```
+Some important arguments:
+* alg_type
+  * which specifies the type of graph convolutional layer.
+  * Here we provide three options: ngcf, gcn, and gcmc. It is set as ngcf by default.
+  
+* adj_type
+  * which specifies the type of laplacian matrix where each entry defines the decay factor between two connected nodes.
+  * Here we provide four options: plain, norm, gcmc, ngcf. It is set as ngcf by default.
+
+## Dataset
+We provide two processed datasets: Gowalla and Amazon-book.
+* train.txt
+  * Train file.
+  * Each line is a user with her/his positive interactions with items: userID\t a list of itemID\n.
+
+* test.txt
+  * Test file (positive instances).
+  * Each line is a user with her/his positive interactions with items: userID\t a list of itemID\n.
+  * Note that here we treat all unobserved interactions as the negative instances when reporting performance.
+  
+* user_list.txt
+  * User file.
+  * Each line is a triplet (org_id, remap_id) for one user, where org_id and remap_id represent the ID of the user in the original and our datasets, respectively.
+  
+* item_list.txt
+  * Item file.
+  * Each line is a triplet (org_id, remap_id) for one item, where org_id and remap_id represent the ID of the item in the original and our datasets, respectively.
