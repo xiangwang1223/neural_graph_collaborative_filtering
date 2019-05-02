@@ -9,7 +9,7 @@ Author: Dr. Xiang Wang (xiangwang at u.nus.edu)
 Neural Graph Collaborative Filtering (NGCF) is a new recommendation framework based on graph neural network, explicitly encoding the collaborative signal in the form of high-order connectivities in user-item bipartite graph by performing embedding propagation.
 
 ## Citation 
-If you want to use our codes in your research, please cite:
+If you want to use our codes and datasets in your research, please cite:
 ```
 @inproceedings{NGCF19,
   author    = {Xiang Wang and
