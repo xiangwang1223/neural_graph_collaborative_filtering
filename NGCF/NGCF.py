@@ -76,13 +76,12 @@ class NGCF(object):
             1. ngcf: defined in 'Neural Graph Collaborative Filtering', SIGIR2019;
             2. gcn:  defined in 'Semi-Supervised Classification with Graph Convolutional Networks', ICLR2018;
             3. gcmc: defined in 'Graph Convolutional Matrix Completion', KDD2018;
-            4. graphsage: defined in 
         """
         if self.alg_type in ['ngcf']:
             self.ua_embeddings, self.ia_embeddings = self._create_ngcf_embed()
 
         elif self.alg_type in ['gcn']:
-            self.ua_embeddings, self.ia_embeddings = self._create_gcmc_embed()
+            self.ua_embeddings, self.ia_embeddings = self._create_gcn_embed()
 
         elif self.alg_type in ['gcmc']:
             self.ua_embeddings, self.ia_embeddings = self._create_gcmc_embed()
