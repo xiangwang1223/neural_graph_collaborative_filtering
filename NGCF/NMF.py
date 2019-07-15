@@ -1,9 +1,14 @@
-#!/usr/local/bin/bash
+'''
+Created on Oct 10, 2018
+Tensorflow Implementation of the baseline of "Neural Collaborative Filtering, He et al. SIGIR 2017" in:
+Wang Xiang et al. Neural Graph Collaborative Filtering. In SIGIR 2019.
+@author: Xiang Wang (xiangwang@u.nus.edu)
+'''
 import tensorflow as tf
 from utility.helper import *
 import numpy as np
 from scipy.sparse import csr_matrix
-from utility.batch_test3 import *
+from utility.batch_test import *
 import os
 import sys
 from tensorflow.contrib.layers.python.layers import batch_norm as batch_norm
