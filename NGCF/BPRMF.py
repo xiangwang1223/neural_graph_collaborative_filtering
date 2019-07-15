@@ -1,9 +1,14 @@
-#!/usr/local/bin/bash
+'''
+Created on Oct 10, 2018
+Tensorflow Implementation of the baseline of "Matrix Factorization with BPR Loss" in:
+Wang Xiang et al. Neural Graph Collaborative Filtering. In SIGIR 2019.
+@author: Xiang Wang (xiangwang@u.nus.edu)
+'''
 import tensorflow as tf
 from utility.helper import *
 import numpy as np
 from scipy.sparse import csr_matrix
-from utility.batch_test2 import *
+from utility.batch_test import *
 import os
 import sys
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
