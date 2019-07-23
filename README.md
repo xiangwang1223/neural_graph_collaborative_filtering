@@ -1,7 +1,7 @@
 # Neural Graph Collaborative Filtering
 This is our Tensorflow implementation for the paper:
 
->Xiang Wang, Xiangnan He, Meng Wang, Fuli Feng, and Tat-Seng Chua (2019). [Neural Graph Collaborative Filtering](https://arxiv.org/abs/1905.08108). In SIGIR'19, Paris, France, July 21-25, 2019.
+>Xiang Wang, Xiangnan He, Meng Wang, Fuli Feng, and Tat-Seng Chua (2019). [Neural Graph Collaborative Filtering](https://dl.acm.org/citation.cfm?doid=3331184.3331267). In SIGIR'19, Paris, France, July 21-25, 2019.
 
 Author: Dr. Xiang Wang (xiangwang at u.nus.edu)
 
@@ -16,10 +16,13 @@ If you want to use our codes and datasets in your research, please cite:
                Xiangnan He and
                Meng Wang and
                Fuli Feng and
-               Tat-Seng Chua},
+               Tat{-}Seng Chua},
   title     = {Neural Graph Collaborative Filtering},
-  booktitle = {{SIGIR}},
-  year      = {2019}
+  booktitle = {Proceedings of the 42nd International {ACM} {SIGIR} Conference on
+               Research and Development in Information Retrieval, {SIGIR} 2019, Paris,
+               France, July 21-25, 2019.},
+  pages     = {165--174},
+  year      = {2019},
 }
 ```
 ## Environment Requirement
