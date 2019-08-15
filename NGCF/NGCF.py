@@ -277,9 +277,14 @@ class NGCF(object):
 
         regularizer = tf.nn.l2_loss(users) + tf.nn.l2_loss(pos_items) + tf.nn.l2_loss(neg_items)
         regularizer = regularizer/self.batch_size
-
-        maxi = tf.log(tf.nn.sigmoid(pos_scores - neg_scores))
-        mf_loss = tf.negative(tf.reduce_mean(maxi))
+        
+        ## In the first version, we implement the bpr loss via the following codes:
+        # maxi = tf.log(tf.nn.sigmoid(pos_scores - neg_scores))
+        # mf_loss = tf.negative(tf.reduce_mean(maxi))
+        
+        # In the second version, we implement the bpr loss via the following codes to aviod 'NAN' loss during training:
+        mf_loss = tf.reduce_sum(tf.nn.softplus(-(pos_scores - neg_scores)))
+        
 
         emb_loss = self.decay * regularizer
 
