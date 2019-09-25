@@ -77,7 +77,7 @@ class BPRMF(object):
         neg_scores = tf.reduce_sum(tf.multiply(users, neg_items), axis=1)
 
         regularizer = tf.nn.l2_loss(users) + tf.nn.l2_loss(pos_items) + tf.nn.l2_loss(neg_items)
-        # regularizer = regularizer/self.batch_size
+        regularizer = regularizer/self.batch_size
 
         maxi = tf.log(tf.nn.sigmoid(pos_scores - neg_scores))
 
@@ -99,7 +99,7 @@ class BPRMF(object):
             print("#params: %d" % total_parameters)
 
 if __name__ == '__main__':
-    # os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu_id)
 
     config = dict()
     config['n_users'] = data_generator.n_users
@@ -138,11 +138,14 @@ if __name__ == '__main__':
             # get the performance from pretrained model.
             users_to_test = list(data_generator.test_set.keys())
             ret = test(sess, model, users_to_test, drop_flag=False)
-            cur_best_pre_0 = ret[5]
+            cur_best_pre_0 = ret['recall'][0]
 
-            pretrain_ret = 'pretrained model recall=[%.5f, %.5f],' \
-                           'map=[%.5f, %.5f], ndcg=[%.5f, %.5f], auc=[%.5f]' % (ret[0], ret[4], ret[5], ret[9], ret[10],
-                                                                            ret[14], ret[15])
+            pretrain_ret = 'pretrained model recall=[%.5f, %.5f], precision=[%.5f, %.5f], hit=[%.5f, %.5f],' \
+                           'ndcg=[%.5f, %.5f]' % \
+                           (ret['recall'][0], ret['recall'][-1],
+                            ret['precision'][0], ret['precision'][-1],
+                            ret['hit_ratio'][0], ret['hit_ratio'][-1],
+                            ret['ndcg'][0], ret['ndcg'][-1])
             print(pretrain_ret)
         else:
             sess.run(tf.global_variables_initializer())
@@ -154,7 +157,8 @@ if __name__ == '__main__':
         print('without pretraining.')
 
 
-    loss_loger, pre_loger, rec_loger, ndcg_loger, auc_loger = [], [], [], [], []
+    loss_loger, pre_loger, rec_loger, ndcg_loger, hit_loger = [], [], [], [], []
+    stopping_step = 0
 
     for epoch in range(args.epoch):
         t1 = time()
@@ -191,50 +195,49 @@ if __name__ == '__main__':
         t3 = time()
 
         loss_loger.append(loss)
-        rec_loger.append(ret[0:5])
-        pre_loger.append(ret[5:10])
-        ndcg_loger.append(ret[10:15])
-        auc_loger.append(ret[15])
+        rec_loger.append(ret['recall'])
+        pre_loger.append(ret['precision'])
+        ndcg_loger.append(ret['ndcg'])
+        hit_loger.append(ret['hit_ratio'])
 
         if args.verbose > 0:
             perf_str = 'Epoch %d [%.1fs + %.1fs]: train==[%.5f=%.5f + %.5f], recall=[%.5f, %.5f], ' \
-                       'map=[%.5f, %.5f], ndcg=[%.5f, %.5f], auc=[%.5f]' % (epoch, t2 - t1, t3 - t2,
-                                                                loss, mf_loss, reg_loss,
-                                                                ret[0], ret[4], ret[5], ret[9], ret[10], ret[14], ret[15])
+                       'precision=[%.5f, %.5f], hit=[%.5f, %.5f], ndcg=[%.5f, %.5f]' % \
+                       (epoch, t2 - t1, t3 - t2, loss, mf_loss, reg_loss, ret['recall'][0], ret['recall'][-1],
+                        ret['precision'][0], ret['precision'][-1], ret['hit_ratio'][0], ret['hit_ratio'][-1],
+                        ret['ndcg'][0], ret['ndcg'][-1])
             print(perf_str)
 
+        cur_best_pre_0, stopping_step, should_stop = early_stopping(ret['recall'][0], cur_best_pre_0,
+                                                                    stopping_step, expected_order='acc', flag_step=10)
+        if should_stop == True:
+            break
         # *********************************************************
         # save the user & item embeddings for pretraining.
-        if args.save_flag == 1:
-            if ret[5] > cur_best_pre_0:
-                cur_best_pre_0 = ret[5]
-                save_saver.save(sess, weights_save_path + '/weights', global_step=epoch)
-                print('save the weights in path: ', weights_save_path)
+        if ret['recall'][0] == cur_best_pre_0 and args.save_flag == 1:
+            save_saver.save(sess, weights_save_path + '/weights', global_step=epoch)
+            print('save the weights in path: ', weights_save_path)
 
 
     recs = np.array(rec_loger)
     pres = np.array(pre_loger)
     ndcgs = np.array(ndcg_loger)
-    auc = np.array(auc_loger)
+    hit = np.array(hit_loger)
 
     best_rec_0 = max(pres[:, 0])
     idx = list(pres[:, 0]).index(best_rec_0)
 
-    final_perf = "Best Iter=[%d]@[%.1f]\trecall=[%.5f, %.5f, %.5f, %.5f, %.5f], map=[%.5f, %.5f, %.5f, %.5f, %.5f]," \
-                 "ndcg=[%.5f, %.5f, %.5f, %.5f, %.5f], auc=[%.5f]" % (idx, time() - t0,
-                                                          recs[idx, 0], recs[idx, 1], recs[idx, 2], recs[idx, 3],
-                                                          recs[idx, 4],
-                                                          pres[idx, 0], pres[idx, 1], pres[idx, 2], pres[idx, 3],
-                                                          pres[idx, 4],
-                                                          ndcgs[idx, 0], ndcgs[idx, 1], ndcgs[idx, 2],
-                                                          ndcgs[idx, 3],
-                                                          ndcgs[idx, 4], auc[idx])
+    final_perf = "Best Iter=[%d]@[%.1f]\trecall=[%s], precision=[%s], hit=[%s], ndcg=[%s]" % \
+                 (idx, time() - t0, '\t'.join(['%.5f' % r for r in recs[idx]]),
+                  '\t'.join(['%.5f' % r for r in pres[idx]]),
+                  '\t'.join(['%.5f' % r for r in hit[idx]]),
+                  '\t'.join(['%.5f' % r for r in ndcgs[idx]]))
     print(final_perf)
 
     save_path = '%soutput_final/%s/%s.result' % (args.proj_path, args.dataset, model.model_type)
     ensureDir(save_path)
     f = open(save_path, 'a')
 
-    f.write('embed_size=%d, lr=%.4f, regs=%s, loss_type=%s, \n\t%s\n' % (args.embed_size, args.lr, args.regs,
-                                                                         args.loss_type, final_perf))
+    f.write('embed_size=%d, lr=%.4f, regs=%s, \n\t%s\n' % (args.embed_size, args.lr, args.regs,
+                                                                         final_perf))
     f.close()
