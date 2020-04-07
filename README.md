@@ -84,3 +84,7 @@ We provide two processed datasets: Gowalla and Amazon-book.
 * `item_list.txt`
   * Item file.
   * Each line is a triplet (org_id, remap_id) for one item, where org_id and remap_id represent the ID of the item in the original and our datasets, respectively.
+
+# Acknowledgement
+
+This research is supported by the National Research Foundation, Singapore under its International Research Centres in Singapore Funding Initiative. Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of National Research Foundation, Singapore.
